@@ -12,7 +12,7 @@ library(tidyverse)
 
 ## Introduction
 
-Gymnastics is a sport that I believe has a lot of potential for analytic. There is a decent amount of data and domain knowledge of the sport is challenging but rewarding to work with. My goal for this analysis is to explore how gymnasts changed over the years.
+Gymnastics is a sport that I believe has a lot of potential for analytic. There is a decent amount of data and domain knowledge of the sport is challenging but rewarding to work with. My goal for this analysis is to explore how gymnasts have changed over the years.
 
 ## The Data
 
@@ -56,8 +56,17 @@ Now we can start getting an idea of what the data looks like visually.
 
 Let's start by looking at the age of the athletes.
 
-```{r age scatter, echo=FALSE}
+```{r age scatter, echo=FALSE, warning=FALSE}
 ggplot(gym, aes(x=Year,y=Age, color=Sex))+geom_jitter()
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+This plot is not very helpful because of how bunched together the data is, even with jittering. Even so, we can get a few things out of this graph:
+* Men in gymnastics seem to be older than women are.
+* Athletes seem to get younger with a minimum in the 80's and then get older again.
+
+Let's try a different plot to see if we can get more insight:
+```{r age smooth plot, echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(gym, aes(x=Year, y=Age, color=Sex))+geom_smooth()
+```
+
+This is a much more useful graph that confirms some of the things we hypothesized earlier. It is easy to see that men are older and that athlete ages for both sexes was at a minimum in the 80's.
