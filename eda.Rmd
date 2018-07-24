@@ -2,7 +2,9 @@
 title: "Olympic Gymnastics EDA"
 author: "WIll Gertsch"
 date: "July 21, 2018"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -36,11 +38,11 @@ We have found two sports by looking for the word "Gymnastics." We want to choose
 gym <- filter(athlete_events, Sport=="Gymnastics")
 ```
 
-Now we have the data for just gymnastics. I want to additionally prune this data to get rid of some columns we don't really need. ID should correspond to the athlete name, but that is worth double checking. Team and NOC basically represent the same thing, so we can drop one and just use the other. I will use the "Team" column since it is easier to understand than the NOC system. In other case, there is the issue  of names changing over time. We will need to clean that aspect up if we ever want to group by a particular country. Games and Season are not useful because gymnastics is always in the summer games and the year is taken care of by the Year column. City will not provide any useful insight because it really isn't connected to any of the other variables. Finally, Sport will also be removed because all its values are now the same.
+Now we have the data for just gymnastics. I want to additionally prune this data to get rid of some columns we don't really need. ID should correspond to the athlete name, but some athletes may have the same name. Team and NOC basically represent the same thing, so we can drop one and just use the other. I will use the "Team" column since it is easier to understand than the NOC system. In other case, there is the issue  of names changing over time. We will need to clean that aspect up if we ever want to group by a particular country. Games and Season are not useful because gymnastics is always in the summer games and the year is taken care of by the Year column. City will not provide any useful insight because it really isn't connected to any of the other variables. Finally, Sport will also be removed because all its values are now the same.
 
 I also changed the units used in Height and Weight from metric to imperial.
 ```{r}
-gym <- gym[, c("Name", "Sex", "Age", "Height", "Weight", "Team", "Year", "Event", "Medal")] %>% 
+gym <- gym[, c("ID", "Name", "Sex", "Age", "Height", "Weight", "Team", "Year", "Event", "Medal")] %>% 
   mutate(Height=round(Height*(0.0328084),1),
          Weight = round(Weight*(2.20462)))
 ```
@@ -53,6 +55,43 @@ That looks a lot more usable!
 
 ## Plots
 Now we can start getting an idea of what the data looks like visually.
+
+
+### Distribution
+It is helpful to get an idea of how the data is distributed.
+
+For these kind of plots, we don't want the same athletes to show up multiple times. The solution is to make a copy of the data that only has the distinct IDs.
+```{r distinct ids}
+gym_distinct <- gym %>% distinct(ID, .keep_all = TRUE)
+```
+
+Now we can start plotting.
+```{r sex dist}
+ggplot(gym_distinct, aes(x=Sex, fill = Sex))+geom_bar()
+```
+There are 2,635 males and 1,499 females in total.
+
+
+```{r age dist}
+ggplot(gym_distinct, aes(x=Age, color = Sex))+geom_freqpoly(na.rm = TRUE, binwidth=1)
+# ggplot(gym, aes(x=Age, fill=Sex))+geom_bar(na.rm=TRUE)
+```
+
+The most common age for men is 22, while the most common age for women is 16. Another interesting comparison is that, even though there are more male athletes than female athletes, there are significantly more 16 year-old women competing at the Olympic level than there are 16 year-old men. 
+
+```{r year dist}
+gym_distinct %>% 
+  mutate(Year = as.character(Year)) %>% 
+  ggplot(aes(x=Year, fill=Sex))+
+  geom_bar(na.rm=TRUE)+
+  coord_flip()
+```
+
+This plot shows that women  did not compete at the Olympic level in the sport until 1928 and then slowly rose in number relative to the male athletes until the present day where the gymnastics has close to at 50-50 male to female ratio. However, the sport seems to be getting more selective in recent years. 
+
+There may be something wrong with the data at certain years, since some years have a huge number of athletes for the time. This is worth investigating.
+
+
 
 ### Age, Height, Weight over time
 Let's start by looking at the age of the athletes.
@@ -102,7 +141,7 @@ ggplot(gym, aes(x=Weight, y=Height, color=Sex))+geom_point()
 cor(gym$Weight, gym$Height, use="complete.obs")
 ```
 
-Unsuprisingly, athlete height and weight are strongly correlated.
+Unsurprisingly, athlete height and weight are strongly correlated.
 ```{R, warning=FALSE}
 ggplot(gym, aes(x=Age, y=Height, color=Sex))+geom_point()
 ```
@@ -115,7 +154,7 @@ cor(gym$Age, gym$Height, use="complete.obs")
 cor(gym$Age, gym$Weight, use="complete.obs")
 ```
 
-Weight and height also have a postive correlation with age, but not as strong as height with weight.
+Weight and height also have a positive correlation with age, but not as strong as height with weight.
 
 
 
