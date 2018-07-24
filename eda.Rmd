@@ -90,7 +90,19 @@ gym_distinct %>%
 This plot shows that women  did not compete at the Olympic level in the sport until 1928 and then slowly rose in number relative to the male athletes until the present day where the gymnastics has close to at 50-50 male to female ratio. However, the sport seems to be getting more selective in recent years. 
 
 There may be something wrong with the data at certain years, since some years have a huge number of athletes for the time. This is worth investigating.
+```{r weird years}
+years <- c(1908, 1912, 1920, 1952)
+gym_strange_years <- gym_distinct %>% 
+  filter(Year %in% years)
+gym_strange_years %>% ggplot(aes(x=Year))+geom_bar()
+```
+This is a closer look at the years in question. All these years have 50+ more athletes than other years. 1908 has close to 150 more athletes than the 2016 games. 
 
+One reason for this might be that there are more events under gymnastics than in later years.
+```{r}
+gym_strange_years %>% ggplot(aes(x=Year, fill = Event))+geom_histogram(binwidth=4)
+```
+This hypothesis proved to be partially correct. The 1908 Olympics is still massive without anything that's obviously fishy, but the 1912 and 1920 games have additional events that might be boosting the number of participants.
 
 
 ### Age, Height, Weight over time
