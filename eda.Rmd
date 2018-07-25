@@ -21,7 +21,7 @@ Gymnastics is a sport that I believe has a lot of potential for analytic. There 
 The dataset that I'm working with is <https://www.kaggle.com/heesoo37/120-years-of-olympic-history-athletes-and-results>. It comes as a csv file, so I'll just go ahead and load it from my project directory.
 
 ```{r load data}
-athlete_events <- read.csv("athlete_events.csv")
+athlete_events <- read_csv("athlete_events.csv")
 ```
 
 Now that the data is loaded, let's get a general idea of what fields we are dealing with.
