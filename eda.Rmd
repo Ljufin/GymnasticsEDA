@@ -110,6 +110,22 @@ gym_strange_years %>% ggplot(aes(x=Year))+geom_bar(fill="brown")
 This is a closer look at the years in question. All these years have 50+ more athletes than other years. 1908 has close to 150 more athletes than the 2016 games. 
 
 
+One issue might be teams could be huge. The Wikipedia states that each team could be between 16 and 40 gymnasts on a team. Let's look at how many people were on each team.
+```{r 1908 team counts}
+gym_distinct %>% 
+  filter(Year == 1908, Event == "Gymnastics Men's Team All-Around") %>% 
+  group_by(Team) %>% 
+  summarise(count = n())
+```
+
+Wait, is GB cheating? Are there actually any repeats?
+```{r GB team members}
+gym_distinct %>% 
+  filter(Year == 1908, Event == "Gymnastics Men's Team All-Around", Team == "Great Britain") %>% 
+  .$Name %>% 
+  unique()
+```
+Nope, no repeats. I wish we had more records of what happened and what the rules were at the time. Some of these extra people may have been alternates.
 
 ### Age, Height, Weight over time
 Let's start by looking at the age of the athletes.
