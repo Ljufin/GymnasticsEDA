@@ -20,7 +20,7 @@ Gymnastics is a sport that I believe has a lot of potential for analytic. There 
 
 The dataset that I'm working with is <https://www.kaggle.com/heesoo37/120-years-of-olympic-history-athletes-and-results>. It comes as a csv file, so I'll just go ahead and load it from my project directory.
 
-```{r load data}
+```{r load data, message=FALSE}
 athlete_events <- read_csv("athlete_events.csv")
 ```
 
@@ -89,20 +89,26 @@ gym_distinct %>%
 
 This plot shows that women  did not compete at the Olympic level in the sport until 1928 and then slowly rose in number relative to the male athletes until the present day where the gymnastics has close to at 50-50 male to female ratio. However, the sport seems to be getting more selective in recent years. 
 
-There may be something wrong with the data at certain years, since some years have a huge number of athletes for the time. This is worth investigating.
+There may be something wrong with the data at certain years, since some years have a huge number of athletes for the time. This is worth investigating. Let's first see what years are outliers.
+```{r outlier years}
+gym_distinct %>% 
+  group_by(Year) %>% 
+  summarise(count = n()) %>% 
+  ggplot(aes(y=count))+geom_boxplot()
+```
+
+It looks like the outlier years are 1908 and 1952. (1896 and 1932 are also outliers, but on the low end) 
+
+We can take a closer look at these weird years.
 ```{r weird years}
-years <- c(1908, 1912, 1920, 1952)
+years <- c(1908,1952, 2016)
 gym_strange_years <- gym_distinct %>% 
+  mutate(Year = as.character(Year)) %>% 
   filter(Year %in% years)
-gym_strange_years %>% ggplot(aes(x=Year))+geom_bar()
+gym_strange_years %>% ggplot(aes(x=Year))+geom_bar(fill="brown")
 ```
 This is a closer look at the years in question. All these years have 50+ more athletes than other years. 1908 has close to 150 more athletes than the 2016 games. 
 
-One reason for this might be that there are more events under gymnastics than in later years.
-```{r}
-gym_strange_years %>% ggplot(aes(x=Year, fill = Event))+geom_histogram(binwidth=4)
-```
-This hypothesis proved to be partially correct. The 1908 Olympics is still massive without anything that's obviously fishy, but the 1912 and 1920 games have additional events that might be boosting the number of participants.
 
 
 ### Age, Height, Weight over time
