@@ -192,6 +192,11 @@ cor(gym$Weight, gym$Height, use="complete.obs")
 
 Unsurprisingly, athlete height and weight are strongly correlated.
 
+### Medal Counts
+Let's do some work investigating just the medalists.
+```{r medal processing}
+medalists <- gym %>% filter(!is.na(Medal))
+```
 
 
 
