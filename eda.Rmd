@@ -76,7 +76,12 @@ There are 2,635 males and 1,499 females in total.
 ggplot(gym_distinct, aes(x=Age, color = Sex))+geom_freqpoly(na.rm = TRUE, binwidth=1)
 ```
 
-The most common age for men is 22, while the most common age for women is 16. Another interesting comparison is that, even though there are more male athletes than female athletes, there are significantly more 16 year-old women competing at the Olympic level than there are 16 year-old men. 
+```{r average ages}
+gym_distinct %>% filter(Sex == "M") %>% .$Age %>% mean(na.rm=TRUE)
+gym_distinct %>% filter(Sex == "F") %>% .$Age %>% mean(na.rm=TRUE)
+```
+The average male age is around 24 and the average female age is around 19. Another thing to note is that at age 16, there are massive numbers of female gymnasts and very few male athletes. These peaks reflect age requirements set by the sport's international governing body and the optimal age more success at the Olympic level.
+
 
 We can do a similar thing for Height.
 ```{r height dist}
@@ -95,7 +100,7 @@ Finally, the distribution of Weight.
 gym_distinct %>% ggplot(aes(x=Weight, color=Sex))+geom_freqpoly(na.rm=TRUE, binwidth=10)
 ```
 
-```{r average heights}
+```{r average weights}
 gym_distinct %>% filter(Sex == "M") %>% .$Weight %>% mean(na.rm=TRUE)
 gym_distinct %>% filter(Sex == "F") %>% .$Weight %>% mean(na.rm=TRUE)
 ```
@@ -141,14 +146,8 @@ gym_distinct %>%
   summarise(count = n())
 ```
 
-Wait, is GB cheating? Are there actually any repeats?
-```{r GB team members}
-gym_distinct %>% 
-  filter(Year == 1908, Event == "Gymnastics Men's Team All-Around", Team == "Great Britain") %>% 
-  .$Name %>% 
-  unique()
-```
-Nope, no repeats. I wish we had more records of what happened and what the rules were at the time. Some of these extra people may have been alternates.
+Sure enough, those are some massive teams(looking at you GB). This explains why 1908 had so many competitors.
+
 
 ### Age, Height, Weight over time
 Let's start by looking at the age of the athletes.
