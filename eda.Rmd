@@ -152,44 +152,37 @@ Sure enough, those are some massive teams(looking at you GB). This explains why 
 ### Age, Height, Weight over time
 Let's start by looking at the age of the athletes.
 
-```{r age scatter, echo=FALSE, warning=FALSE}
+```{r age scatter, warning=FALSE}
 ggplot(gym, aes(x=Year,y=Age, color=Sex))+geom_jitter()
 ```
 
 This plot is not very helpful because of how bunched together the data is, even with jittering. Even so, we can get a few things out of this graph:
-* Men in gymnastics seem to be older than women are.
+* Confirmation that men in gymnastics tend to be older.
 * Athletes seem to get younger with a minimum in the 80's and then get older again.
 
 Let's try a different plot to see if we can get more insight:
-```{r age smooth plot, echo=FALSE, warning=FALSE, message=FALSE}
+```{r age smooth plot, warning=FALSE, message=FALSE}
 ggplot(gym, aes(x=Year, y=Age, color=Sex))+geom_smooth()
 ```
 
-This is a much more useful graph that confirms some of the things we hypothesized earlier. It is easy to see that men are older and that athlete ages for both sexes was at a minimum in the 80's. The plot also shows that there is decent amount of variance of age recently in the sport, but overall the age for Olympians has narrowed.
+This is a much more useful graph that confirms some of the things we hypothesized earlier. It is easy to see that men are older and that athlete ages for both sexes was at a minimum in the 80's.
 
-We can do a similar thing for Height:
-```{r height smooth plot, echo=FALSE, warning=FALSE, message=FALSE}
+
+```{r height smooth plot, warning=FALSE, message=FALSE}
 ggplot(gym, aes(x=Year, y=Height, color=Sex))+geom_smooth()
 ```
 
-Unsurprisingly, men are taller than women on average. There also appears to be some interesting phenomenon with the variation in age. In the early days of the sport, athletes tend to be a wide range of heights. As time goes on, the average male height seems to become fairly uniform, while the women's average height is very erratic, but might become more uniform as time goes on. Let's check some variance numbers to get a better intuition for what's going on:
-```{r}
-var(filter(gym, Sex=="M", Year==1936)$Height, na.rm=TRUE)
-var(filter(gym, Sex=="M", Year==2016)$Height, na.rm=TRUE)
-var(filter(gym, Sex=="F", Year==1936)$Height, na.rm=TRUE)
-var(filter(gym, Sex=="F", Year==2016)$Height, na.rm=TRUE)
-```
-These numbers show that our hypothesis about variance based on the graph turned out to be incorrect. For both men and women, the variance actually *increased* in 2016 compared to 1936. (Does this make sense?)
+Unsurprisingly, men are taller than women on average. There also appears to be some interesting phenomenon with the variation in age. On the men's side, the average height seems to have stabilized with very little variation year to year since the 1950's. The womens graph is a little more erratic, suggesting significant changes year to year and a decent amount of variance within years.
 
-Finally, we can also plot the weight:
-```{r weight smooth plot, echo=FALSE, warning=FALSE, message=FALSE}
+
+```{r weight smooth plot, warning=FALSE, message=FALSE}
 ggplot(gym, aes(x=Year, y=Weight, color=Sex))+geom_smooth()
 ```
 
 This plot looks very similar to the Height plot, probably because taller athletes will weigh more than shorted athletes.
 
 
-### Correlation
+
 ```{R, warning=FALSE}
 ggplot(gym, aes(x=Weight, y=Height, color=Sex))+geom_point()
 ```
@@ -198,19 +191,8 @@ cor(gym$Weight, gym$Height, use="complete.obs")
 ```
 
 Unsurprisingly, athlete height and weight are strongly correlated.
-```{R, warning=FALSE}
-ggplot(gym, aes(x=Age, y=Height, color=Sex))+geom_point()
-```
-```{R, warning=FALSE}
-ggplot(gym, aes(x=Age, y=Weight, color=Sex))+geom_point()
-```
 
-```{r, warning=FALSE}
-cor(gym$Age, gym$Height, use="complete.obs")
-cor(gym$Age, gym$Weight, use="complete.obs")
-```
 
-Weight and height also have a positive correlation with age, but not as strong as height with weight.
 
 
 
