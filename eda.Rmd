@@ -74,10 +74,33 @@ There are 2,635 males and 1,499 females in total.
 
 ```{r age dist}
 ggplot(gym_distinct, aes(x=Age, color = Sex))+geom_freqpoly(na.rm = TRUE, binwidth=1)
-# ggplot(gym, aes(x=Age, fill=Sex))+geom_bar(na.rm=TRUE)
 ```
 
 The most common age for men is 22, while the most common age for women is 16. Another interesting comparison is that, even though there are more male athletes than female athletes, there are significantly more 16 year-old women competing at the Olympic level than there are 16 year-old men. 
+
+We can do a similar thing for Height.
+```{r height dist}
+gym_distinct %>% ggplot(aes(x=Height, color=Sex))+geom_freqpoly(na.rm=TRUE, binwidth = 0.1)
+```
+
+```{r average heights}
+gym_distinct %>% filter(Sex == "M") %>% .$Height %>% mean(na.rm=TRUE)
+gym_distinct %>% filter(Sex == "F") %>% .$Height %>% mean(na.rm=TRUE)
+```
+
+The average male height is around 5'6″ while the average for women is around 5'1″.
+
+Finally, the distribution of Weight.
+```{r weight dist}
+gym_distinct %>% ggplot(aes(x=Weight, color=Sex))+geom_freqpoly(na.rm=TRUE, binwidth=10)
+```
+
+```{r average heights}
+gym_distinct %>% filter(Sex == "M") %>% .$Weight %>% mean(na.rm=TRUE)
+gym_distinct %>% filter(Sex == "F") %>% .$Weight %>% mean(na.rm=TRUE)
+```
+The average weight for men is around 140 lbs. while the average weight for women is around 104 pounds.
+
 
 ```{r year dist}
 gym_distinct %>% 
