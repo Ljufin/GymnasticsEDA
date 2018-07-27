@@ -192,10 +192,41 @@ cor(gym$Weight, gym$Height, use="complete.obs")
 
 Unsurprisingly, athlete height and weight are strongly correlated.
 
-### Medal Counts
+### Medals
 Let's do some work investigating just the medalists.
 ```{r medal processing}
 medalists <- gym %>% filter(!is.na(Medal))
+```
+
+One of the most popular things to do is to do a medal count by country, so let's do that.
+```{r medals by country plot}
+gold_medals <- medalists %>%
+  filter(Medal=="Gold") %>%
+  group_by(Team) %>%
+  summarise(golds = n())
+
+silver_medals <- medalists %>%
+  filter(Medal=="Silver") %>%
+  group_by(Team) %>%
+  summarise(silvers = n())
+
+bronze_medals <- medalists %>%
+  filter(Medal=="Bronze") %>%
+  group_by(Team) %>%
+  summarise(bronzes = n())
+
+total_medals <- medalists %>%
+  group_by(Team) %>%
+  summarise(total = n())
+
+medals <- inner_join(gold_medals, silver_medals, by="Team") %>% 
+  inner_join(bronze_medals, by="Team") %>%
+  inner_join(total_medals, by= "Team") %>% arrange(desc(total))
+
+medals %>%
+  ggplot(aes(x=Team, y=total))+geom_col()+coord_flip()
+  
+
 ```
 
 
