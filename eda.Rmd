@@ -200,31 +200,31 @@ medalists <- gym %>% filter(!is.na(Medal))
 
 One of the most popular things to do is to do a medal count by country, so let's do that.
 ```{r medals by country plot}
-gold_medals <- medalists %>%
-  filter(Medal=="Gold") %>%
-  group_by(Team) %>%
-  summarise(golds = n())
+# get the top 10 teams by total medal count
+top_teams <- medalists %>% 
+  group_by(Team) %>% 
+  summarise(total = n()) %>% 
+  arrange(desc(total)) %>% 
+  .$Team %>% 
+  head(25) %>%
+  rev()
 
-silver_medals <- medalists %>%
-  filter(Medal=="Silver") %>%
-  group_by(Team) %>%
-  summarise(silvers = n())
+# filter down medalists to just to those 10 teams
+medalists <- medalists %>% filter(Team %in% top_teams)
 
-bronze_medals <- medalists %>%
-  filter(Medal=="Bronze") %>%
-  group_by(Team) %>%
-  summarise(bronzes = n())
+# for reordering the plot
+medalists$Team <- factor(medalists$Team, levels=top_teams)
+medalists$Medal <- factor(medalists$Medal, levels=c("Gold", "Silver", "Bronze"))
 
-total_medals <- medalists %>%
-  group_by(Team) %>%
-  summarise(total = n())
-
-medals <- inner_join(gold_medals, silver_medals, by="Team") %>% 
-  inner_join(bronze_medals, by="Team") %>%
-  inner_join(total_medals, by= "Team") %>% arrange(desc(total))
-
-medals %>%
-  ggplot(aes(x=Team, y=total))+geom_col()+coord_flip()
+medalists %>% 
+  group_by(Team, Medal) %>% 
+  summarise(total = n()) %>% 
+  ggplot(aes(x=Team, y = total, fill = Medal)) +
+  geom_bar(stat="identity") + 
+  coord_flip()+
+  scale_fill_manual(values=c("#FFD700", "#D3D3D3", "#cd7f32")) + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+panel.background = element_blank(), axis.line = element_line(colour = "black"))
   
 
 ```
