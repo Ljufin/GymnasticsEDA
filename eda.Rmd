@@ -149,6 +149,7 @@ gym_distinct %>%
 Sure enough, those are some massive teams(looking at you GB). This explains why 1908 had so many competitors.
 
 
+
 ### Age, Height, Weight over time
 Let's start by looking at the age of the athletes.
 
@@ -206,17 +207,17 @@ top_teams <- medalists %>%
   summarise(total = n()) %>% 
   arrange(desc(total)) %>% 
   .$Team %>% 
-  head(25) %>%
+  head(20) %>%
   rev()
 
 # filter down medalists to just to those 10 teams
-medalists <- medalists %>% filter(Team %in% top_teams)
+top_medals <- medalists %>% filter(Team %in% top_teams)
 
 # for reordering the plot
-medalists$Team <- factor(medalists$Team, levels=top_teams)
-medalists$Medal <- factor(medalists$Medal, levels=c("Gold", "Silver", "Bronze"))
+top_medals$Team <- factor(top_medals$Team, levels=top_teams)
+top_medals$Medal <- factor(top_medals$Medal, levels=c("Gold", "Silver", "Bronze"))
 
-medalists %>% 
+top_medals %>% 
   group_by(Team, Medal) %>% 
   summarise(total = n()) %>% 
   ggplot(aes(x=Team, y = total, fill = Medal)) +
@@ -229,9 +230,34 @@ panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
 ```
 
+The Soviet Union is clearly the leader in total medal count of *{r echo=FALSE} top_medals %>% group_by(Team) %>% summarise(total=n()) %>% .$total %>% max()*, which is way ahead of the USA in second place with 177 medals. It also leads in the number of golds and silvers.
 
+```{r medals over time}
+# famously dominate teams
+dominate_teams <- c("Soviet Union", "United States", "Japan", "China", "Russia", "Romania")
+dominate_medals <- medalists %>%
+  filter(Team %in% dominate_teams) %>%
+  group_by(Team, Year) %>% 
+  summarise(medals=n())
+            
+dominate_medals %>%  ggplot(aes(x=Year, y=medals, color=Team))+geom_line()
+  
+```
 
+This is a very messy plot and its hard to tell what's going on, especially in more recent years. It will be better to look at the teams individually and pairwise.
 
+```{r soviet union to russia}
+dominate_medals %>%
+  filter(Team == "Soviet Union" || Team == "Russia") %>%
+  ggplot(aes(x=Year, y=medals, color=Team))+geom_line()
+```
 
+The Soviet Union started out very well, but their medal count sharply fell over the next few decades. Despite this, the previous two plots tell us that the Soviet teams were still the best team in world at the time. This dominance was continued by the Russian team in the 1996 and 2000 games, but the team soon slid down the medal rankings below some of the other dominate teams. However, Russia's team placements in 2012 and 2016 have shown that they are still a dominate force in the sport.
 
+```{r soviets and japan}
+dominate_medals %>%
+  filter(Team == "Soviet Union" || Team == "Japan") %>%
+  ggplot(aes(x=Year, y=medals, color=Team))+geom_line()
+```
 
+Between the 1960's and the 1980's, Japan proved to be a serious challenge to Soviet gymnastics supremacy. I theorize that the Japanese might be one of the significant causes of the Soviet's decline in medal count during this period. (I don't quite know how to test this yet...)  Japan also wins an award for being very consistently good for the last 20 years.
