@@ -194,7 +194,7 @@ cor(gym$Weight, gym$Height, use="complete.obs")
 Unsurprisingly, athlete height and weight are strongly correlated.
 
 ### Medals
-Let's do some work investigating just the medalists.
+Let's do some work investigating just the medalists. One thing to note is that I choose to count every medal given out for each athlete for the team event instead of giving 1 medal to each country that placed. I feel this gives a better metric for how well a team is doing overall, since it gives the most weight to the most representative event. However, we will see that the performance in the team event is not the end-all-be-all of team performance as there are 12 other medals to be won on the individual events.
 ```{r medal processing}
 medalists <- gym %>% filter(!is.na(Medal))
 ```
@@ -268,4 +268,4 @@ dominate_medals %>%
   ggplot(aes(x=Year, y=medals, color=Team))+geom_line()
 ```
 
-This is very interesting. It seems that China's medal performance might be related to the United States's medal performance. My theory for this is that China and USA have very comparable teams and their medal counts will respond similarly to external factors, such as other teams becoming stronger or weaker.
+This is very interesting. It seems that China's medal performance might be related to the United States's medal performance. My theory for this is that China and USA have very comparable teams and their medal counts will respond similarly to external factors, such as other teams becoming stronger or weaker. There is a divergence in 2016 due to poor individual medal performance from China, even though they won team titles in both mens and womens. 
