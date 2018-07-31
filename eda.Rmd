@@ -97,7 +97,7 @@ The average male height is around 5'6″ while the average for women is around 5
 
 Finally, the distribution of Weight.
 ```{r weight dist}
-gym_distinct %>% ggplot(aes(x=Weight, color=Sex))+geom_freqpoly(na.rm=TRUE, binwidth=10)
+gym_distinct %>% ggplot(aes(x=Weight, color=Sex))+geom_freqpoly(na.rm=TRUE, binwidth=5)
 ```
 
 ```{r average weights}
@@ -260,4 +260,12 @@ dominate_medals %>%
   ggplot(aes(x=Year, y=medals, color=Team))+geom_line()
 ```
 
-Between the 1960's and the 1980's, Japan proved to be a serious challenge to Soviet gymnastics supremacy. I theorize that the Japanese might be one of the significant causes of the Soviet's decline in medal count during this period. (I don't quite know how to test this yet...)  Japan also wins an award for being very consistently good for the last 20 years.
+Between the 1960's and the 1980's, Japan proved to be a serious challenge to Soviet gymnastics supremacy. I theorize that the Japanese might be one of the significant causes of the Soviet's decline in medal count during this period. (Would probably use cross-correlation from time series analysis; too advanced for this EDA)  Japan also wins an award for being very consistently good for the last 20 years.
+
+```{r USA and China}
+dominate_medals %>%
+  filter(Team == "United States" || Team == "China") %>%
+  ggplot(aes(x=Year, y=medals, color=Team))+geom_line()
+```
+
+This is very interesting. It seems that China's medal performance might be related to the United States's medal performance. My theory for this is that China and USA have very comparable teams and their medal counts will respond similarly to external factors, such as other teams becoming stronger or weaker.
