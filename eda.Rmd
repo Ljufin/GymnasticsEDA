@@ -1,7 +1,7 @@
 ---
-title: "Olympic Gymnastics EDA"
-author: "WIll Gertsch"
-date: "July 21, 2018"
+title: "Olympic Gymnastics Exploratory Data Analysis"
+author: "Will Gertsch"
+date: "July 31, 2018"
 output:
   html_document: default
   pdf_document: default
@@ -38,9 +38,7 @@ We have found two sports by looking for the word "Gymnastics." We want to choose
 gym <- filter(athlete_events, Sport=="Gymnastics")
 ```
 
-Now we have the data for just gymnastics. I want to additionally prune this data to get rid of some columns we don't really need. ID should correspond to the athlete name, but some athletes may have the same name. Team and NOC basically represent the same thing, so we can drop one and just use the other. I will use the "Team" column since it is easier to understand than the NOC system. In other case, there is the issue  of names changing over time. We will need to clean that aspect up if we ever want to group by a particular country. Games and Season are not useful because gymnastics is always in the summer games and the year is taken care of by the Year column. City will not provide any useful insight because it really isn't connected to any of the other variables. Finally, Sport will also be removed because all its values are now the same.
-
-I also changed the units used in Height and Weight from metric to imperial.
+Now we have the data for just gymnastics. I want to additionally prune this data to get rid of some columns we don't really need. I also changed the units used in Height and Weight from metric to imperial.
 ```{r}
 gym <- gym[, c("ID", "Name", "Sex", "Age", "Height", "Weight", "Team", "Year", "Event", "Medal")] %>% 
   mutate(Height=round(Height*(0.0328084),1),
@@ -69,6 +67,7 @@ Now we can start plotting.
 ```{r sex dist}
 ggplot(gym_distinct, aes(x=Sex, fill = Sex))+geom_bar()
 ```
+
 There are 2,635 males and 1,499 females in total.
 
 
@@ -135,6 +134,7 @@ gym_strange_years <- gym_distinct %>%
   filter(Year %in% years)
 gym_strange_years %>% ggplot(aes(x=Year))+geom_bar(fill="brown")
 ```
+
 This is a closer look at the years in question. All these years have 50+ more athletes than other years. 1908 has close to 150 more athletes than the 2016 games. 
 
 
@@ -146,8 +146,7 @@ gym_distinct %>%
   summarise(count = n())
 ```
 
-Sure enough, those are some massive teams(looking at you GB). This explains why 1908 had so many competitors.
-
+Sure enough, those are some massive teams(looking at you GB). This explains why 1908 had so many competitors. The the same is the case with the 1952 games, but instead of there being a few, super-massive teams, there are a bunch of teams with 10-16 athletes.
 
 
 ### Age, Height, Weight over time
@@ -158,6 +157,7 @@ ggplot(gym, aes(x=Year,y=Age, color=Sex))+geom_jitter()
 ```
 
 This plot is not very helpful because of how bunched together the data is, even with jittering. Even so, we can get a few things out of this graph:
+
 * Confirmation that men in gymnastics tend to be older.
 * Athletes seem to get younger with a minimum in the 80's and then get older again.
 
@@ -230,7 +230,7 @@ panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
 ```
 
-The Soviet Union is clearly the leader in total medal count of *{r echo=FALSE} top_medals %>% group_by(Team) %>% summarise(total=n()) %>% .$total %>% max()*, which is way ahead of the USA in second place with 177 medals. It also leads in the number of golds and silvers.
+The Soviet Union is clearly the leader in total medal count of 288, which is way ahead of the USA in second place with 177 medals. It also leads in the number of golds and silvers.
 
 ```{r medals over time}
 # famously dominate teams
@@ -268,4 +268,54 @@ dominate_medals %>%
   ggplot(aes(x=Year, y=medals, color=Team))+geom_line()
 ```
 
-This is very interesting. It seems that China's medal performance might be related to the United States's medal performance. My theory for this is that China and USA have very comparable teams and their medal counts will respond similarly to external factors, such as other teams becoming stronger or weaker. There is a divergence in 2016 due to poor individual medal performance from China, even though they won team titles in both mens and womens. 
+This is very interesting. It seems that China's medal performance might be related to the United States's medal performance. My theory for this is that China and USA have very comparable teams and their medal counts will respond similarly to external factors, such as other teams becoming stronger or weaker. There is a divergence in 2016 due to poor individual medal performance from China, even though they won team titles in both men's and women's. 
+
+Now let's look at the individual medalists in terms of total medals and number of gold medals won.
+```{r top medalists data}
+top_totals <- medalists %>%
+  group_by(Name, Team) %>%
+  summarise(Total=n()) %>%
+  arrange(desc(Total)) %>%
+  head(10)
+  
+
+top_golds <- medalists %>% 
+  filter(Medal == "Gold") %>% 
+  group_by(Name, Team) %>%
+  summarise(Total = n()) %>%
+  arrange(desc(Total)) %>%
+  head(10)
+```
+
+```{r top total medals plot}
+
+top_totals$Name <- factor(top_totals$Name, levels=rev(top_totals$Name))
+
+top_totals %>%
+  ggplot(aes(x=Name, y=Total))+
+  geom_bar(stat="identity")+
+  coord_flip()
+```
+
+This plot should give an idea as to who was consistently great in multiple events. Additionally, the highest total medal winners tend to have survived multiple Olympic cycles, which is difficult to do because of how short a gymnast's competitive life-time usually is.
+
+```{r top gold medals plot}
+top_golds$Name <- factor(top_golds$Name, levels=rev(top_golds$Name))
+
+top_golds %>%
+  ggplot(aes(x=Name, y=Total)) +
+  geom_bar(stat="Identity")+
+  coord_flip()
+```
+
+Another way of looking at things is to see who won the most gold medals. Larsya Latynina is the clear leader in both total medal count and the number of gold medals for the women. On the men's side, there are three different candidates. Sawao Kato leads in gold medals, but both Borys Shakhlin and Nikolay Andrianov beat him in total medal count. My pick in the men's side would have to be Andrianov, since he has the same number of gold medals as Shakhlin, but leads in total medal count.
+
+### Conclusion
+This exploratory data analysis of gymnastics at the summer Olympics showed that there are some interesting aspects and trends in the athlete data that are worth investigating further. Here's a list of things that I want to pursue at a later time:
+
+* The ages, heights, weights of medalists and if they differed from that year's competition.
+* More detail about how changes in the sport over time changed the athletes.
+* See how men's and women's teams perform differently in the same country.
+* Predict the best teams for the 2020 games.
+* Further investigate the strange China/USA medal relationship
+* Visualize the gymnast of the decade for both men and women.
