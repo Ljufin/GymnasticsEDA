@@ -14,7 +14,7 @@ library(tidyverse)
 
 ## Introduction
 
-Gymnastics is a sport that I believe has a lot of potential for analytic. There is a decent amount of data and domain knowledge of the sport is challenging but rewarding to work with. My goal for this analysis is to explore how gymnasts have changed over the years.
+Gymnastics is a sport that I believe has a lot of potential for analytic. There is a decent amount of data and domain knowledge of the sport is challenging but rewarding to work with. My goal for this analysis is to explore how gymnasts have changed over the years and how teams and individuals have performed.
 
 ## The Data
 
